@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		return
 	}
+	cmd.RestartContainers(context, client, unhealthyContainers)
 	for _, element := range unhealthyContainers {
 		fmt.Println(element.ID)
 	}

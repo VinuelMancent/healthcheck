@@ -5,6 +5,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"strings"
+	"time"
 )
 
 func ConnectToDocker() (error, context.Context, *client.Client) {
@@ -43,4 +44,15 @@ func GetAllUnhealthyContainers(ctx context.Context, client *client.Client) (erro
 		}
 	}
 	return nil, unhealthyContainers
+}
+
+func RestartContainers(ctx context.Context, client *client.Client, containers []types.Container) error {
+	duration, err := time.ParseDuration("250ms")
+	if err != nil {
+		return err
+	}
+	for _, element := range containers {
+		client.ContainerRestart(ctx, element.ID, &duration)
+	}
+	return nil
 }
