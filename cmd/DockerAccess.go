@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"Healthcheck/model"
 	"context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -44,6 +45,35 @@ func GetAllUnhealthyContainers(ctx context.Context, client *client.Client) (erro
 		}
 	}
 	return nil, unhealthyContainers
+}
+
+func GetContainersByName(ctx context.Context, client *client.Client, containerNames []string) (error, []types.Container) {
+	pathToComposeYaml := "C:\\Users\\Vincent\\Documents\\Uni\\Thesis\\Thesis\\DockerComposeDaprPoc\\WithDaprWithoutDurable - LB"
+	err, containers := GetAllContainers(ctx, client)
+	if err != nil {
+		return err, nil
+	}
+	containersToReturn := make([]types.Container, 0)
+	//iterate over each container to check its names
+	for _, container := range containers {
+		//iterate over each name of the container
+		for _, name := range container.Names {
+			//iterate over each name of the containernames to compare with current container current name
+			for _, nameToCompare := range containerNames {
+				//full container name = /+pathToComposeYaml+name+index (alles kleingeschrieben)
+				fullContainerName := model.ContainerName{
+					Name:      nameToCompare,
+					Directory: pathToComposeYaml,
+					Index:     1,
+				}
+				toCompare := fullContainerName.String()
+				if name == toCompare {
+					containersToReturn = append(containersToReturn, container)
+				}
+			}
+		}
+	}
+	return nil, containersToReturn
 }
 
 func RestartContainers(ctx context.Context, client *client.Client, containers []types.Container) error {

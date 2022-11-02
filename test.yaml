@@ -1,0 +1,4 @@
+name: vincent
+dependentServices:
+  - name: test
+  - name: test2
