@@ -2,3 +2,5 @@ name: vincent
 dependentServices:
   - name: test
   - name: test2
+  - name: fineCollection
+  - name: redis

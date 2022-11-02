@@ -19,10 +19,18 @@ func main() {
 	//for _, element := range unhealthyContainers {
 	//	fmt.Println(element.ID)
 	//}
-	names := make([]string, 1)
+	services, err := cmd.ReadFileToServiceWithDependencies("C:\\Users\\Vincent\\Documents\\Go\\src\\Healthcheck\\test.yaml")
+	if err != nil {
+		return
+	}
+	names := make([]string, len(services.DependentServices)+1)
+	names[0] = services.Name
+	for index, element := range services.DependentServices {
+		names[index+1] = element.Name
+	}
 	//names[0] = "test"
 	//names[1] = "redis"
-	names[0] = "fineCollection"
+	//names[0] = "fineCollection"
 	err, containers := cmd.GetContainersByName(context, client, names)
 	if err != nil {
 		return
